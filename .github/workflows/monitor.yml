@@ -9,30 +9,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 1. Descargar codigo del repo
+      - name: 1. Descargar codigo
         uses: actions/checkout@v4
 
-      - name: 2. Configurar entorno Python
+      - name: 2. Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: 3. Instalacion Forzada de Herramientas
+      - name: 3. Instalacion Certificada de Librerias
         run: |
           python -m pip install --upgrade pip
-          pip install pandas pytrends openpyxl
+          # Fijamos urllib3 para evitar el error de 'method_whitelist'
+          pip install pandas openpyxl pytrends urllib3==1.26.15
 
-      - name: 4. Ejecutar Analisis (Busqueda Automatica)
-        # Este comando busca cualquier archivo que empiece con 'adoquin' y lo corre
-        # Soluciona el error de "file not found" por nombres mal escritos
+      - name: 4. Ejecutar Analisis de Mercado
         run: |
-          SCRIPT_NAME=$(find . -maxdepth 1 -name "adoquin*.py" -print -quit)
-          echo "Ejecutando: $SCRIPT_NAME"
-          python "$SCRIPT_NAME"
+          # Buscamos el script de forma inteligente por si el nombre tiene espacios
+          SCRIPT=$(find . -name "adoquin*.py" | head -n 1)
+          echo "Ejecutando: $SCRIPT"
+          python "$SCRIPT"
 
-      - name: 5. Exportar Reporte Excel
+      - name: 5. Exportar Reporte Final
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Reporte-Estrategico-Estrublock
+          name: Reporte-Estrategico-Jalisco
           path: "*.xlsx"
