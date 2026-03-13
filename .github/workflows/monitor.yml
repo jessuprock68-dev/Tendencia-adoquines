@@ -27,5 +27,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Reporte-Tendencias-Estrublock
-          # Usamos el asterisco para que agarre cualquier Excel que se haya creado
-          path: "*.xlsx"
+          # Ahora buscamos el nombre exacto que pusimos en Python
+          path: reporte_estrublock.xlsx
