@@ -3,37 +3,38 @@ from pytrends.request import TrendReq
 import time
 import sys
 
-def ejecutar():
-    print("🚀 Iniciando motor de búsqueda Estrublock...")
+def ejecutar_analisis():
+    print("🚀 Iniciando motor de inteligencia Estrublock...")
     
-    # Añadimos un pequeño retraso inicial para no entrar "en seco"
-    time.sleep(5)
+    # Pausa de seguridad para evitar bloqueos por IP
+    time.sleep(10)
     
-    # Configuración de conexión más humana
-    pytrends = TrendReq(hl='es-MX', tz=360, timeout=(10,25))
+    # Configuración de conexión con tiempos de espera más amplios
+    pytrends = TrendReq(hl='es-MX', tz=360, timeout=(15, 30))
     
     kw_list = ["adoquin romano", "adoquin hueso", "adoquin barrita"]
     
     try:
-        print(f"🔎 Consultando tendencias para: {kw_list}")
-        # Reducimos un poco el periodo para asegurar que Google responda
+        print(f"🔎 Consultando demanda en Jalisco: {kw_list}")
+        # Usamos un periodo de 1 mes para reducir la carga de datos y evitar el Error 429
         pytrends.build_payload(kw_list, timeframe='today 1-m', geo='MX-JAL')
         
         df = pytrends.interest_over_time()
-        
         nombre_archivo = "reporte_estrublock_final.xlsx"
         
         if df.empty:
-            print("⚠️ Google respondió pero sin datos. Reintentando...")
-            pd.DataFrame({"Estado": ["Sin datos - Google Limit"], "Nota": ["Esperar 1 hora"]}).to_excel(nombre_archivo)
+            print("⚠️ Google limitó la respuesta. Generando reporte de estado.")
+            pd.DataFrame({"Estado": ["Límite de Google alcanzado"], "Sugerencia": ["No ejecutar más de una vez por hora"]}).to_excel(nombre_archivo, index=False)
         else:
             df = df.drop(columns=['isPartial'], errors='ignore')
-            print("✅ Datos obtenidos con éxito.")
+            print("✅ Datos obtenidos exitosamente.")
             df.to_excel(nombre_archivo)
             
+        print(f"📂 Archivo guardado: {nombre_archivo}")
+
     except Exception as e:
-        print(f"❌ Error detectado: {e}")
-        pd.DataFrame({"Error": [str(e)]}).to_excel("reporte_estrublock_final.xlsx")
+        print(f"❌ Error en el proceso: {e}")
+        pd.DataFrame({"Error": [str(e)]}).to_excel("reporte_estrublock_final.xlsx", index=False)
 
 if __name__ == "__main__":
-    ejecutar()
+    ejecutar_analisis()
