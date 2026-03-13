@@ -28,7 +28,9 @@ def ejecutar_monitor():
 
         if all_data:
             df_final = pd.concat(all_data, axis=1).fillna(0)
-            nombre_archivo = f"Tendencias_Estrublock_{datetime.now().strftime('%Y-%m')}.xlsx"
+            # Busca la línea donde guardas el archivo (usualmente .to_excel)
+            # Cámbiala para que el nombre sea fijo:
+            nombre_archivo = "reporte_estrublock.xlsx"
             df_final.to_excel(nombre_archivo)
             print(f"✅ Reporte generado: {nombre_archivo}")
         else:
